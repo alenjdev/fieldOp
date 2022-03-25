@@ -1,0 +1,48 @@
+@import "../styles/colors.scss";
+
+.btn {
+  background-color: $blue;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  border-radius: 2.5rem;
+  border: none;
+  outline: none;
+  box-shadow: 0rem 1rem 1rem rgba(0, 0, 0, 0.25);
+
+  &-small {
+    height: 3rem;
+    width: 6rem;
+  }
+  &-medium {
+    width: 5.4rem;
+    height: 2.8rem;
+  }
+  &-large {
+    height: 4rem;
+    width: 12rem;
+    font-size: 1.4rem;
+    padding-right: 3rem;
+    padding-left: 3rem;
+  }
+  &-primary {
+    background-color: $blue;
+    color: $black;
+  }
+  &-secondary {
+    background-color: $silver;
+    color: $black;
+  }
+  &-tertiary {
+    background-color: $module;
+    color: $silver;
+  }
+  &-exit {
+    background-color: $red;
+    color: $black;
+  }
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.2, 1.2) translate3d(0, 0, 0);
+    transition: 0.2s;
+  }
+}

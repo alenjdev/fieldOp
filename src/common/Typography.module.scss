@@ -1,0 +1,28 @@
+@import "../styles/colors.scss";
+
+.typography {
+  color: $white;
+  &-display {
+    font-size: 5rem;
+    line-height: 6rem;
+  }
+  &-h1 {
+    font-size: 3.2rem;
+    font-size: 4rem;
+  }
+  &-h2 {
+    font-size: 2.4rem;
+    line-height: 3.4rem;
+    letter-spacing: 1px;
+  }
+  &-h3 {
+    font-size: 1.8rem;
+    line-height: 2.7rem;
+    letter-spacing: 1px;
+  }
+  &-h4 {
+    font-size: 1.3rem;
+    line-height: 2.2rem;
+    letter-spacing: 1px;
+  }
+}

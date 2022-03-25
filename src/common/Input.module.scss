@@ -1,0 +1,25 @@
+@import "../styles/colors.scss";
+.input {
+  width: 100%;
+  background-color: $steel-two;
+  line-height: 4rem;
+  padding: 0 2rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border: none;
+  border-bottom: 1px solid $silver;
+  border-top: 1px solid $steel-two;
+  font-size: 1.6rem;
+  color: $silver;
+  letter-spacing: 0.5px;
+  color: $white;
+  outline: none;
+  &:focus {
+    border-radius: 0.6rem;
+    background-color: $black;
+    border: 1px solid $blue;
+  }
+  &::placeholder {
+    color: $silver;
+  }
+}

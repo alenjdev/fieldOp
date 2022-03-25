@@ -1,0 +1,18 @@
+@import "../styles/colors.scss";
+.status {
+  height: 5rem;
+  width: 18rem;
+  position: relative;
+  background-color: $steel-one;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  span {
+    font-size: 1.8rem;
+    letter-spacing: 0.5px;
+    color: $silver;
+    margin-left: 0.5rem;
+  }
+}
