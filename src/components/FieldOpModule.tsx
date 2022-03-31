@@ -32,17 +32,16 @@ export const FieldOpModule: FC<IFieldOpModuleProps> = ({ device }) => {
       if (typeof latestState === "number") {
         if (streams[stream].data[0].name === "time.elapse")
           setTimeElapse(latestState);
-        if (streams[stream].data[0].name === "time.remaining")
+        if (streams[stream].data[0].name === "time.remaining_2") {
           setTimeRemaining(latestState);
+        }
+
         if (streams[stream].data[0].name === "completion")
           setCompletion(latestState);
         if (streams[stream].data[0].name === "voltage") setBattery(latestState);
         return;
       }
-      if (
-        streams[stream].data[0].name === "mission.state" &&
-        latestState.length > 3
-      ) {
+      if (streams[stream].data[0].name === "status" && latestState.length > 3) {
         let status = (
           (latestState as string).replaceAll('"', "")[0].toUpperCase() +
           (latestState as string).replaceAll('"', "").slice(1)
