@@ -10,13 +10,11 @@ interface IFieldOpModuleProps {
 }
 
 export const FieldOpModule: FC<IFieldOpModuleProps> = ({ device }) => {
-  const [state, setState] = useState({
-    status: "-",
-    timeElapse: 0,
-    timeRemaining: 0,
-    completion: 0,
-    battery: 0,
-  });
+  const [status, setStatus] = useState("-");
+  const [timeElapse, setTimeElapse] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [completion, setCompletion] = useState(0);
+  const [battery, setBattery] = useState(0);
 
   useLayoutEffect(() => {
     App.addModuleDataListener(setData);
@@ -27,63 +25,58 @@ export const FieldOpModule: FC<IFieldOpModuleProps> = ({ device }) => {
     if (Object.keys(streams).length === 0) {
       throw new Error("No streams.");
     }
-    const currentState = state;
 
     Object.keys(streams).forEach((stream, idx) => {
       const latestState = getLatestData(streams, stream);
       if (latestState === undefined) return;
       if (typeof latestState === "number") {
         if (streams[stream].data[0].name === "time.elapse")
-          currentState.timeElapse = latestState;
+          setTimeElapse(latestState);
         if (streams[stream].data[0].name === "time.remaining")
-          currentState.timeRemaining = latestState;
+          setTimeRemaining(latestState);
         if (streams[stream].data[0].name === "completion")
-          currentState.completion = latestState;
-        if (streams[stream].data[0].name === "voltage")
-          currentState.completion = latestState;
+          setCompletion(latestState);
+        if (streams[stream].data[0].name === "voltage") setBattery(latestState);
         return;
       }
-      if (streams[stream].data[0].name === "mission.state") {
-        currentState.status = (
+      if (
+        streams[stream].data[0].name === "mission.state" &&
+        latestState.length > 3
+      ) {
+        let status = (
           (latestState as string).replaceAll('"', "")[0].toUpperCase() +
           (latestState as string).replaceAll('"', "").slice(1)
         ).trim();
+        setStatus(status);
       }
     });
-    if (JSON.stringify(state) !== JSON.stringify(currentState)) {
-      setState(currentState);
-    }
   };
 
   return (
     <div>
       <div className={styles.status}>
-        {state.status === "Halted" ? <PauseIcon /> : <RunningIcon />}
-        <span>{state.status}</span>
+        {status === "Halted" ? <PauseIcon /> : <RunningIcon />}
+        <span>{status}</span>
       </div>
       <CompletionCircle
-        percentage={state.completion}
+        percentage={completion}
         name="Completion"
-        value={state.completion + "%"}
+        value={completion + "%"}
       />
       <CompletionCircle
-        percentage={
-          (100 / (state.timeElapse + state.timeRemaining)) * state.timeElapse
-        }
+        percentage={(100 / (timeElapse + timeRemaining)) * timeElapse}
         name="Time Elapse"
-        value={state.timeElapse + "min"}
+        value={timeElapse + "min"}
       />
       <CompletionCircle
-        percentage={
-          (100 / (state.timeElapse + state.timeRemaining)) * state.timeRemaining
-        }
+        percentage={(100 / (timeElapse + timeRemaining)) * timeRemaining}
         name="Time Remaining"
-        value={state.timeRemaining + "min"}
+        value={timeRemaining + "min"}
       />
       <CompletionCircle
-        percentage={state.battery}
+        percentage={battery}
         name="Battery"
-        value={`${state.battery}%`}
+        value={`${battery}%`}
       />
     </div>
   );
