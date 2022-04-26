@@ -16,6 +16,14 @@ export const FieldOpModule: FC<IFieldOpModuleProps> = ({ device }) => {
   const [completion, setCompletion] = useState(0);
   const [battery, setBattery] = useState(0);
 
+  const shouldClearData = (
+    lastUpdate: number,
+    scruttingTime: number,
+    seconds: number
+  ) => {
+    return lastUpdate + seconds * 1000 < scruttingTime;
+  };
+
   useLayoutEffect(() => {
     App.addModuleDataListener(setData);
   }, [device]);
@@ -26,25 +34,52 @@ export const FieldOpModule: FC<IFieldOpModuleProps> = ({ device }) => {
       throw new Error("No streams.");
     }
 
-    Object.keys(streams).forEach((stream, idx) => {
+    Object.keys(streams).forEach((stream) => {
       const latestState = getLatestData(streams, stream);
-      if (latestState === undefined) return;
-      if (typeof latestState === "number") {
-        if (streams[stream].data[0].name === "time.elapse")
-          setTimeElapse(latestState);
+      if (latestState[1] === undefined) return;
+      if (typeof latestState[1] === "number") {
+        if (streams[stream].data[0].name === "time.elapse") {
+          if (shouldClearData(latestState[0], newValue.time, 10)) {
+            setTimeElapse(0);
+            return;
+          }
+          setTimeElapse(latestState[1]);
+        }
         if (streams[stream].data[0].name === "time.remaining_2") {
-          setTimeRemaining(latestState);
+          if (shouldClearData(latestState[0], newValue.time, 10)) {
+            setTimeRemaining(0);
+            return;
+          }
+          setTimeRemaining(latestState[1]);
         }
 
-        if (streams[stream].data[0].name === "completion")
-          setCompletion(latestState);
-        if (streams[stream].data[0].name === "voltage") setBattery(latestState);
+        if (streams[stream].data[0].name === "completion") {
+          if (shouldClearData(latestState[0], newValue.time, 10)) {
+            setCompletion(0);
+            return;
+          }
+          setCompletion(latestState[1]);
+        }
+        if (streams[stream].data[0].name === "voltage") {
+          if (shouldClearData(latestState[0], newValue.time, 10)) {
+            setBattery(0);
+            return;
+          }
+          setBattery(latestState[1]);
+        }
         return;
       }
-      if (streams[stream].data[0].name === "status" && latestState.length > 3) {
+      if (
+        streams[stream].data[0].name === "status" &&
+        latestState[1].length > 3
+      ) {
+        if (shouldClearData(latestState[0], newValue.time, 10)) {
+          setStatus("-");
+          return;
+        }
         let status = (
-          (latestState as string).replaceAll('"', "")[0].toUpperCase() +
-          (latestState as string).replaceAll('"', "").slice(1)
+          (latestState[1] as string).replaceAll('"', "")[0].toUpperCase() +
+          (latestState[1] as string).replaceAll('"', "").slice(1)
         ).trim();
         setStatus(status);
       }
@@ -82,11 +117,9 @@ export const FieldOpModule: FC<IFieldOpModuleProps> = ({ device }) => {
 };
 
 const getLatestData = (
-  moduleData: {
-    [stream_name: string]: Stream;
-  },
+  moduleData: any,
   stream: string
-): string | number | undefined => {
+): any | number | undefined => {
   if (moduleData[stream] === undefined) {
     return "No stream.";
   }
@@ -106,5 +139,5 @@ const getLatestData = (
     return "No datapoints.";
   }
 
-  return latestPoint[1];
+  return latestPoint;
 };
